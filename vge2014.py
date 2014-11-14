@@ -12,10 +12,12 @@ def download(url):
     import os
     import datetime
     #url = 'http://www.blog.pythonlibrary.org/wp-content/uploads/2012/06/wxDbViewer.zip'
-    base,outputFile=os.path.split(url)
-    if not os.path.exists('photos'):
-        os.mkdir('photos')
-    outputFile=os.getcwd()+'\\photos\\'+outputFile
+    base,outputFile=os.path.split(url)# get save file name
+    save_dir,runfile=os.path.split(os.path.realpath(__file__))# get save directory
+    save_dir=save_dir+'photos\\'
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
+    outputFile=save_dir+outputFile# define save path
 
     print("downloading with urllib")
     print(outputFile+' is downloading......')
@@ -43,12 +45,13 @@ def download(url):
 def hrefs():
     urls=[]
     ids=range(1,166);
+    ids_str=['%03d' %i for i in ids]
     dir='http://www.iseis.cuhk.edu.hk/img/events/20141106_conference/'
     urls.append(dir+'00a.jpg')
     urls.append(dir+'00b.jpg')
     urls.append(dir+'00c.jpg')
     
-    map(lambda i:urls.append(dir+str(i)+'.jpg'),ids)
+    map(lambda i:urls.append(dir+i+'.jpg'),ids_str)
     # print(urls)
     return urls
 
@@ -73,4 +76,6 @@ def Run():
     print('Totall cost time: '+time_msg)
 
 if __name__=='__main__':
-    Run()
+    # Run()
+    # print('%03d' %2)
+    print(hrefs())
