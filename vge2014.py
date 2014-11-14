@@ -15,7 +15,7 @@ def download(url):
     base,outputFile=os.path.split(url)
     if not os.path.exists('photos'):
         os.mkdir('photos')
-    outputFile='photos/'+outputFile
+    outputFile=os.getcwd()+'\\photos\\'+outputFile
 
     print("downloading with urllib")
     print(outputFile+' is downloading......')
