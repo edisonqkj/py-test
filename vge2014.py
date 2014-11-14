@@ -21,7 +21,7 @@ def download(url):
     print(outputFile+' is downloading......')
 
     start_time=datetime.datetime.now()
-    # urllib.urlretrieve(url, outputFile)
+    urllib.urlretrieve(url, outputFile)
 
     size=1.0*os.path.getsize(outputFile)/1024**2# Megabyte
     costtime=(datetime.datetime.now()-start_time).seconds
@@ -57,7 +57,7 @@ def write(urls):
     map(lambda path:f.writelines(path+'\n'),urls)
     f.close()
 
-if __name__=='__main__':
+def Run():
     write(hrefs())
 
     import datetime
@@ -66,8 +66,11 @@ if __name__=='__main__':
     costtime=(datetime.datetime.now()-start_time).seconds
     if costtime>60**2:
         time_msg=str(1.0*costtime/60**2)+'h'
-    else if costime>60:
+    elif costime>60:
         time_msg=str(1.0*costtime/60)+'m'
     else:
         time_msg=str(1.0*costtime)+'s'
     print('Totall cost time: '+time_msg)
+
+if __name__=='__main__':
+    Run()
