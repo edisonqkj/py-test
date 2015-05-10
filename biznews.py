@@ -141,6 +141,9 @@ def downloadImages(dir,url):
 	# save to dir/2010/01/abc.jpg
 	import urllib
 	outputFile=dir+'/'.join(url.split('/')[-3:])
+	# read '\n' when read files
+	outputFile=outputFile.strip('\n')
+	# print(outputFile)
 	# download image
 	if not os.path.exists(outputFile):
 		urllib.urlretrieve(url, outputFile)
