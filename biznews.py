@@ -1,7 +1,7 @@
 '''
 ## Download all jpgs on http://www.talkingbiznews.com/wp-content/uploads/
 ## .../uploads/year/month/*.jpg
-## Time: 5/9/14
+## Time: 5/9/15
 ## Author: Edison Qian
 ## E-mail: edison90110@gmail.com
 '''
