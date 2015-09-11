@@ -28,6 +28,7 @@ def ListFeatureClass(path):
 			 'Region','Route','Tic','All']
 	fc=arcpy.ListFeatureClasses('*','All')
 	print(fc)
+	return fc
 
 def ListField(path):
 	directory,dataset=os.path.split(path)
@@ -35,8 +36,11 @@ def ListField(path):
 	fld_type=['BLOB','Date','Double','Geometry','GlobalID','GUID' \
 			 'Integer','OID','Raster','Single','SmallInteger','String','All']
 	flds=arcpy.ListFields(dataset,'*','All')
+	fldname=[]
 	for fld in flds:
 		print(fld.name)
+		fldname.append(fld.name)
+	return fldname
 
 def ListRaster(path):
 	arcpy.env.workspace=path;

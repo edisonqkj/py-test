@@ -11,6 +11,7 @@ def FeatureDatasetProperty(desObject,isprint=True):
     property['name']=desObject.name
     property['dataType']=desObject.dataType
     fcnames=arcpy.ListFeatureClasses()
+    print(fcnames)
     property['featureclassesCount']=len(fcnames)
     property['featureclasses']={}
     for fcname in fcnames:
@@ -49,6 +50,12 @@ def FeatureClassProperty(desObject,isprint=True):
     property['shapeFieldName']=desObject.shapeFieldName
     property['shapeType']=desObject.shapeType
     property['table']=TableProperty(desObject,False)
+    property['spatialReference']={}
+    property['spatialReference']['name']=desObject.spatialReference.name
+    property['spatialReference']['type']=desObject.spatialReference.type
+    property['spatialReference']['GCSname']=desObject.spatialReference.GCS.name
+    property['spatialReference']['datumName']=desObject.spatialReference.datumName
+    property['spatialReference']['spheroidName']=desObject.spatialReference.spheroidName
     if isprint:
         print(property)
     return property
@@ -94,9 +101,9 @@ def ToolboxProperty(desObject,isprint=True):
 def ShapeFileProperty(desObject,isprint=True):
     if isprint:
         print(desObject.catalogPath)
-    property={}
-    property['name']=desObject.name
-    property['dataType']=desObject.dataType
+    property=FeatureClassProperty(desObject,false)
+    # property['name']=desObject.name
+    # property['dataType']=desObject.dataType
     if isprint:
         print(property)
     return property
@@ -114,9 +121,10 @@ def CheckData(path):
               'RasterCatalog':RasterCatalogProperty,\
               'Toolbox':ToolboxProperty,\
               'ShapeFile':ShapeFileProperty}
-    
+
     desc=arcpy.Describe(path)
     if format=='gdb':# gdb
+        arcpy.env.workspace=path
         # list all layers' attributes like feature, raster
         items=desc.children
         for item in items:
@@ -129,14 +137,16 @@ def CheckData(path):
             # Toolbox
             # ShapeFile
             #print(item.name+':'+item.dataType)
-            typefunc[item.dataType](item)
+            typefunc[item.dataType](item,False)
     else:# shapefile, rasterdataset layer
-        typefunc[desc.dataType](desc)
+        arcpy.env.workspace=directory
+        print(desc.dataType)
+        # typefunc[desc.dataType](desc)
     print('finish')
     
 
 if __name__=='__main__':
     work=r'c:\py\database\DataTypes.gdb'
-    # work=r'c:\py\case\case1\april\apr.shp'
-    # work=r'c:\py\database\tahoe\emer\erhill'
+    work=r'c:\py\case\case1\april\apr.shp'# dataType=File/tx/mg
+    work=r'c:\py\database\tahoe\emer\erhill'
     CheckData(work)
