@@ -52,10 +52,16 @@ def FeatureClassProperty(desObject,isprint=True):
     property['table']=TableProperty(desObject,False)
     property['spatialReference']={}
     property['spatialReference']['name']=desObject.spatialReference.name
-    property['spatialReference']['type']=desObject.spatialReference.type
+    property['spatialReference']['type']=desObject.spatialReference.type # Geographic/Projected
     property['spatialReference']['GCSname']=desObject.spatialReference.GCS.name
     property['spatialReference']['datumName']=desObject.spatialReference.datumName
     property['spatialReference']['spheroidName']=desObject.spatialReference.spheroidName
+    if desObject.spatialReference.type=='Projected':
+        property['spatialReference']['metersPerUnit']=desObject.spatialReference.metersPerUnit
+    elif desObject.spatialReference.type=='Geographic':
+        property['spatialReference']['metersPerUnit']=-1
+    property['spatialReference']['linearUnitName']=desObject.spatialReference.linearUnitName # empty for GCS
+    property['spatialReference']['angularUnitName']=desObject.spatialReference.angularUnitName # empty for PCS
     if isprint:
         print(property)
     return property
@@ -137,16 +143,17 @@ def CheckData(path):
             # Toolbox
             # ShapeFile
             #print(item.name+':'+item.dataType)
-            typefunc[item.dataType](item,False)
+            typefunc[item.dataType](item,True)
     else:# shapefile, rasterdataset layer
         arcpy.env.workspace=directory
         print(desc.dataType)
-        # typefunc[desc.dataType](desc)
+        typefunc[desc.dataType](desc)
     print('finish')
     
 
 if __name__=='__main__':
     work=r'c:\py\database\DataTypes.gdb'
-    work=r'c:\py\case\case1\april\apr.shp'# dataType=File/tx/mg
-    work=r'c:\py\database\tahoe\emer\erhill'
+    # work='c:/py/database/sandiego.gdb/freeways'
+    # work=r'c:\py\case\case1\april\apr.shp'# dataType=File/tx/mg
+    # work=r'c:\py\database\tahoe\emer\erhill'
     CheckData(work)
