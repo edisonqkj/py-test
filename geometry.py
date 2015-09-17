@@ -74,15 +74,18 @@ def PointFeature(ptlist,outshp):
 		# print(ptgeo.JSON)
 	arcpy.CopyFeatures_management(geolist,outshp)
 
-def Part(inshp):
+def PrintPoint(inshp):
 	g=arcpy.Geometry()
 	geolist=arcpy.CopyFeatures_management(inshp,g)
+	# print(g.count)
+	print(geolist)
 	# geilist --> [geometry objects]
 	print('len(geolist)={}'.format(len(geolist)))
 	i=0
 	for geo in geolist:
 		i+=1
 		arrays=geo.getPart()
+		print(geo.partCount)
 		print('len(arrays)={}'.format(len(arrays)))
 		# arrays
 		j=0
@@ -93,6 +96,24 @@ def Part(inshp):
 			for k in range(array.count):
 				pt=array.getObject(k)
 				print('#{} shape #{} part #{} point: ({})'.format(i,j,k,pt))
+
+def ReadPoint(inshp):
+	cursor=arcpy.da.SearchCursor(inshp,['OID@','SHAPE@'])
+	for row in cursor:
+		ptgeometry=row[1]
+		pt=ptgeometry.getPart()
+		print('#{} feature: ({},{})'.format(row[0],pt.X,pt.Y))
+
+def ReadPolylinePolygon(inshp):
+	cursor=arcpy.da.SearchCursor(inshp,['OID@','SHAPE@','SHAPE@LENGTH'])
+	for row in cursor:
+		geometry=row[1]
+		for i in range(geometry.partCount):
+			array=geometry.getPart(i)
+			j=0
+			for pt in array:
+				print('#{} feature,length={}, #{} part, #{} point: ({},{})'.format(row[0],row[2],i,j,pt.X,pt.Y))
+				j+=1
 
 def PointToPolygonBoundary(point,polygon,polyline):
 	# link vertext to the points on the buffer boundary
@@ -149,5 +170,7 @@ if __name__=='__main__':
 	pt='c:/py/database/datatypes.gdb/points'
 	# PointFeature(ptlist,pt)
 	line='c:/py/database/datatypes.gdb/lines'
-	# Part(bufplg)
-	PointToPolygonBoundary(pt,bufplg,line)
+	PrintPoint(buf)
+	# PointToPolygonBoundary(pt,bufplg,line)
+	ReadPoint(pt)
+	ReadPolylinePolygon(buf)

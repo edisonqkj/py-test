@@ -12,6 +12,8 @@ def Search(object):
 	for row in cursor:
 		# cmd="row."+fldname[0]
 		# print(eval(cmd))
+		# from 10.1, data access module arcpy.da support row indexing
+		# print(row[0])
 		print(row.getValue(fldname[0]))
 	del row,cursor
 
@@ -78,9 +80,9 @@ if __name__=='__main__':
 	fcs=ListFeatureClass(work)
 	print(fcs)
 	for fc in fcs: 
-		# Search(work+'/'+fc)
+		Search(work+'/'+fc)
 		# Geometry(os.path.join(work,fc))
-		Project(os.path.join(work,fc))
+		# Project(os.path.join(work,fc))
 		# break
 	# Update(work+'/'+'updatefc')
 	# Insert(work+'/'+'updatefc')
