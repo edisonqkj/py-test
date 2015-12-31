@@ -16,7 +16,7 @@ def formatit(str):
 		if i % 2==1:
 			res.append(sub[i-1]+'('+sub[i]+')')
 	result=' -> '.join(res)+'\n'
-	return head+result
+	return head+result+'\n'
 
 def groupit(strs):
 	# A\nB\nC\nD --> A\nB\n+\n\n+C\nD\n+\n\n
@@ -26,12 +26,9 @@ def groupit(strs):
 	# [i if i>2 else i-1 for i in a]
 	result=[]
 	for index,item in enumerate(strs):
-		if (index+1)%2==0:
-			result.append(item+'\n')
-		elif (index+1)%10==0:
-			result.append(item+'\n\n\n')
-		else:
-			result.append(item)
+		result.append(item)
+		if (index+1)%10==0:
+			result.append('\n\n\n')
 
 	# n=str.strip('\n')
 	# n=n.strip(',')
@@ -43,6 +40,12 @@ def groupit(strs):
 	# result=' -> '.join(res)+'\n'
 	return result
 
+def gettoolname(str):
+	cnen=str.split('\n')[0].strip(')').split('(')
+	cn=cnen[0]
+	en=cnen[1]
+	return cn.lower()+'\n'+en.lower()+'\n'
+
 if __name__ == '__main__':
 	f=u'tool.csv'
 	csv=open(f,'r')
@@ -50,13 +53,22 @@ if __name__ == '__main__':
 	content=csv.readlines()
 	csv.close()
 	# print(','.join(content).encode('utf-8'))
-	print(content)
+	print 'CONTENT:\n',content
 
 	cc=map(formatit,content)
-	print(cc)
+	print 'PATH:\n',cc
+	
+	tool=map(gettoolname,cc)
+	print 'TOOL:\n',tool
 
-	cc=groupit(cc)
-	with open('result.txt','w') as write:
-		write.writelines(cc)
-	write.close()
+	gptool=groupit(tool)
+	with open('tools.txt','w') as write1:
+		write1.writelines(gptool)
+	write1.close()
+	print 'written finished.'
 
+	gpcc=groupit(cc)
+	with open('result.txt','w') as write2:
+		write2.writelines(gpcc)
+	write2.close()
+	print 'written finished.'
