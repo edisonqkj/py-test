@@ -1,0 +1,4 @@
+Shape_Length,Double,
+Shape,Geometry,
+STREET_NAM,String,
+OBJECTID,OID,
