@@ -12,10 +12,10 @@ def formatit(str):
 	sub=n.split(',')
 	head=sub[-2]+'('+sub[-1]+')\n'
 	res=[]
-	for i in range(1,len(sub)+1):
+	for i in range(1,len(sub)-1):
 		if i % 2==1:
 			res.append(sub[i-1]+'('+sub[i]+')')
-	result=' -> '.join(res)+'\n'
+	result=' -> '.join(res)+' -> \n'
 	return head+result+'\n'
 
 def groupit(strs):
@@ -27,7 +27,7 @@ def groupit(strs):
 	result=[]
 	for index,item in enumerate(strs):
 		result.append(item)
-		if (index+1)%10==0:
+		if (index+1)%5==0:
 			result.append('\n\n\n')
 
 	# n=str.strip('\n')
@@ -41,9 +41,10 @@ def groupit(strs):
 	return result
 
 def gettoolname(str):
+	# bug: error occurs where a parenthese exists in the tool name
 	cnen=str.split('\n')[0].strip(')').split('(')
 	cn=cnen[0]
-	en=cnen[1]
+	en=''.join(cnen[1].split(' '))
 	return cn.lower()+'\n'+en.lower()+'\n'
 
 if __name__ == '__main__':
