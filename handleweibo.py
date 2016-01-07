@@ -59,7 +59,7 @@ def handle(csv):
 	# some error occure in splitting string line as more comma is in title & address
 	# for the sake of creating points, here goes to extract lon & lat instead
 	# of all the attributes.
-	print(csv)
+	# print(csv)
 	checkin_points=[]
 	f=open(csv,'r')
 	content=f.readlines()
@@ -70,13 +70,15 @@ def handle(csv):
 		line=line.strip('\n')
 		items=line.split(',')
 		# print(items[3])
-		if isDigitOrFloat(items[3]):
-			checkin_points.append({'lon':items[3],'lat':items[4]})
+		if len(items)<5:
+			continue
+		if isLonLat(items[3],items[4]):
+			checkin_points.append({'poiid':items[0],'lon':items[3],'lat':items[4]})
 		else:
-			i=1
-			while(not isDigitOrFloat(items[3+i])):
-				i=i+1
-			checkin_points.append({'lon':items[3+i],'lat':items[4+i]})
+			for i in range(0,len(items)-1):
+				if isLonLat(items[i],items[i+1]):
+					checkin_points.append({'poiid':items[0],'lon':items[i],'lat':items[i+1]})
+					break
 		# checkin_points.append({'poiid':items[0],\
 		# 					   'title':items[1],\
 		# 					   'address':items[2],\
@@ -89,33 +91,53 @@ def handle(csv):
 	print(checkin_points[:5])
 	return checkin_points
 
+def isLonLat(lonstr,latstr):
+	# China:
+	# longitude:	73-135
+	# latitude:		18-54(exclude south China ocean)
+	if isDigitOrFloat(lonstr) and float(lonstr)<=180 and float(lonstr)>=73 \
+		and isDigitOrFloat(latstr) and float(latstr)<=54 and float(latstr)>=18:
+		return True
+	return False
+
 def toShapefile(records,outshp):
+	# print(outshp)
 	points=[]
 	for record in records:
-		print(record)
+		# print(record)
 		pt=arcpy.Point()
-		pt.X=record['lon']
-		pt.Y=record['lat']
+		pt.X=float(record['lon'])
+		pt.Y=float(record['lat'])
 		point=arcpy.PointGeometry(pt)
 		points.append(point)
+	arcpy.env.overwriteOutput=True
 	arcpy.CopyFeatures_management(points,outshp)
+	print('shapefile is saved.')
 
 def toText(records,outtxt):
 	with open(outtxt,'w') as write:
+		write.write('lon,lat,poiid\n')
 		for record in records: 
 			print(record)
-			write.write(record['lon']+','+record['lat']+'\n')
+			write.write(record['lon']+','+record['lat']+','+record['poiid']+'\n')
 	write.close()
 
 if __name__=='__main__':
 	code_file=ur'city.html'
 	# citycode=getCityCode(code_file)
 
-	data_path=ur'weibo'
+	data_path=ur'E:/ACTC/3-工作安排/课程/博士生课程/0-自然班/weibo/WeiboDataShare-master'
+	points=[]
 	files=os.listdir(data_path)
 	print(files)
 	for f in files:
-		if f[-3:]=='csv' and f=='aomen.csv':
+		if f[-3:]=='csv' and f[0:2]!='0-' and f=='beijing.csv':
+			if(os.path.exists(os.path.join(data_path,f[:-4]+'.shp'))):
+				continue
 			records=handle(os.path.join(data_path,f))
-			# toShapefile(records,os.path.join(data_path,'points.shp'))
-			toText(records,os.path.join(data_path,'points.txt'))
+			if len(records)==0:
+				continue
+			# points.extend(records)
+			# toShapefile(records,os.path.join(data_path,f[:-4]+'.shp'))
+			toText(records,os.path.join(data_path,f[:-4]+'_xyid.csv'))
+	# toText(points,os.path.join(data_path,'0-points.csv'))
